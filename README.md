@@ -1,7 +1,3 @@
-Here's the updated README file with pnpm instructions:
-
----
-
 # Zania Take-Home Task
 
 This project demonstrates a simple yet interactive card management application built with Vite, React, and TypeScript. The application features draggable cards, image display, and persistent state management.
