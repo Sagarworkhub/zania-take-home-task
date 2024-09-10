@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 import tsParser from '@typescript-eslint/parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import eslintPluginImportX from 'eslint-plugin-import-x';
@@ -19,6 +20,7 @@ export default TS_ESLint.config(
       react.configs.flat['jsx-runtime'],
       eslintPluginImportX.flatConfigs.recommended,
       eslintPluginImportX.flatConfigs.typescript,
+      ...pluginQuery.configs['flat/recommended'],
       ...tailwind.configs['flat/recommended'],
       ...TS_ESLint.configs.strictTypeChecked,
       ...TS_ESLint.configs.stylisticTypeChecked,
