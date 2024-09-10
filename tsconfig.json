@@ -11,11 +11,24 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "~assets/*": ["src/assets/*"],
-      "~components/*": ["src/components/*"],
-      "~lib/*": ["src/lib/*"],
-      "~services/*": ["src/services/*"]
+      "~/*": [
+        "src/*"
+      ],
+      "~assets/*": [
+        "src/assets/*"
+      ],
+      "~components/*": [
+        "src/components/*"
+      ],
+      "~lib/*": [
+        "src/lib/*"
+      ],
+      "~mocks/*": [
+        "src/mocks/*"
+      ],
+      "~services/*": [
+        "src/services/*"
+      ]
     }
   }
 }
