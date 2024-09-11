@@ -67,10 +67,15 @@ export const DocumentGrid: React.FC = () => {
   }, [data, documents.length]);
 
   useEffect(() => {
+    const debouncedDocumentsStr = JSON.stringify(debouncedDocuments);
+    const dataStr = JSON.stringify(data);
+
+    if (debouncedDocumentsStr === dataStr) return;
+
     if (debouncedDocuments.length > 0) {
       mutate(debouncedDocuments);
     }
-  }, [debouncedDocuments, mutate]);
+  }, [data, debouncedDocuments, mutate]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
