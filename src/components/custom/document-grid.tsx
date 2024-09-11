@@ -13,24 +13,27 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+import useDebounce from '~/lib/hooks/use-debounce';
 
 import { useGetDocuments } from '~/services/get-documents';
 import { useReorderDocuments } from '~/services/reorder-documents';
+import { type IDocument } from '~/services/types';
 
 import { SortableCard } from './sortable-card';
 import { Spinner } from './spinner';
 
-// export interface DocumentGridProps {
-//   data: Array<IDocument>;
-// }
-
 export const DocumentGrid: React.FC = () => {
-  // const [documents, setDocuments] = useState<Array<IDocument>>(data);
+  const { data = [], isError, isFetching, error } = useGetDocuments();
 
-  const { data = [], isFetching, isError, error } = useGetDocuments();
+  const [documents, setDocuments] = useState<Array<IDocument>>(data);
 
-  const mu = useReorderDocuments();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { mutate } = useReorderDocuments();
+
+  const debouncedDocuments = useDebounce(documents, 5000);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -39,18 +42,52 @@ export const DocumentGrid: React.FC = () => {
     }),
   );
 
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
 
-      if (active.id !== over?.id) {
-        const oldIndex = data.findIndex((item) => item.position === active.id);
-        const newIndex = data.findIndex((item) => item.position === over?.id);
-        mu.mutate(arrayMove(data, oldIndex, newIndex));
-      }
-    },
-    [data, mu],
-  );
+    if (active.id !== over?.id) {
+      setDocuments((currentItems) => {
+        const oldIndex = currentItems.findIndex(
+          (item) => item.position === active.id,
+        );
+        const newIndex = currentItems.findIndex(
+          (item) => item.position === over?.id,
+        );
+
+        const newItems = arrayMove(currentItems, oldIndex, newIndex);
+        return newItems;
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!documents.length) {
+      setDocuments(data);
+    }
+  }, [data, documents.length]);
+
+  useEffect(() => {
+    if (debouncedDocuments.length > 0) {
+      mutate(debouncedDocuments);
+    }
+  }, [debouncedDocuments, mutate]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isFetching) {
+      setIsLoading(true);
+      timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+    } else {
+      timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isFetching]);
 
   if (isError) {
     return (
@@ -61,7 +98,7 @@ export const DocumentGrid: React.FC = () => {
     );
   }
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className='flex h-screen w-screen items-center justify-center'>
         <Spinner />
@@ -85,11 +122,11 @@ export const DocumentGrid: React.FC = () => {
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={data.map((d) => d.position)}
+          items={documents.map((d) => d.position)}
           strategy={rectSortingStrategy}
         >
           <div className='grid grid-cols-3 gap-4'>
-            {data.map((doc) => (
+            {documents.map((doc) => (
               <SortableCard
                 key={doc.position}
                 id={doc.position}
