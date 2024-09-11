@@ -9,6 +9,11 @@ This project demonstrates a simple yet interactive card management application b
 - **Dialog Box**: A modal dialog allows users to view the full cat image. The dialog can be closed by clicking outside, pressing the Esc key, or using the close button.
 - **Data Fetching and Persistence**: Data is fetched from a mocked API using `msw` and managed with TanStack Query (`@tanstack/react-query`). The app uses optimistic updates to handle card reordering and persists data in local storage using TanStack Query's persist functionality.
 
+## Branches
+
+- **main**: Implements debounce updates for handling card reordering.
+- **optimistic-updates**: Implements optimistic updates instead of debounce updates for a more responsive user experience.
+
 ## Technologies Used
 
 - **React**: UI library
